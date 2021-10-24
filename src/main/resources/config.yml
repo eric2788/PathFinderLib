@@ -1,0 +1,12 @@
+debug: false
+
+can_climb:
+  - LADDER
+  - VINE
+  - WATER
+
+damageable:
+  - LAVA
+  - FIRE
+  - CACTUS
+  - MAGMA_BLOCK
