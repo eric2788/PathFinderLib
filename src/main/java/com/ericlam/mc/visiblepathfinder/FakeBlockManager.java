@@ -25,6 +25,7 @@ public final class FakeBlockManager {
         }
     }
 
+    private final Map<Player, Queue<Location>> fakePlacedQueue = new ConcurrentHashMap<>();
     private final Map<Player, Queue<ShowBlock>> playerQueueMap = new ConcurrentHashMap<>();
     private final Map<Player, FakeBlockRunnable> runnableMap = new HashMap<>();
 
@@ -33,15 +34,25 @@ public final class FakeBlockManager {
 
 
     public void showFakeBlock(Location location, Player player, Material material) {
-        playerQueueMap.putIfAbsent(player, new ConcurrentLinkedDeque<>());
-        playerQueueMap.get(player).add(new ShowBlock(location, material));
         if (!runnableMap.containsKey(player)) {
+            playerQueueMap.putIfAbsent(player, new ConcurrentLinkedDeque<>());
+            fakePlacedQueue.putIfAbsent(player, new ConcurrentLinkedDeque<>());
             var runnable = new FakeBlockRunnable(player);
             runnable.runTaskTimer(plugin, 0L, 5L);
             runnableMap.put(player, runnable);
         }
+        playerQueueMap.get(player).add(new ShowBlock(location, material));
     }
 
+    public void clearAllFakeBlock(Player player) {
+        if (!fakePlacedQueue.containsKey(player)) return;
+        var queue = fakePlacedQueue.get(player);
+        while (!queue.isEmpty()) {
+            var loc = queue.poll();
+            player.sendBlockChange(loc, loc.getBlock().getBlockData());
+            loc.getBlock().getState().update(true);
+        }
+    }
 
 
     private class FakeBlockRunnable extends BukkitRunnable {
@@ -58,11 +69,12 @@ public final class FakeBlockManager {
             if (running) return;
             running = true;
             var queue = playerQueueMap.get(player);
-            if (queue != null) {
-                while (!queue.isEmpty()) {
-                    var show = queue.poll();
-                    player.sendBlockChange(show.location, show.showMaterial.createBlockData());
-                }
+            var placedQueue = fakePlacedQueue.get(player);
+            while (!queue.isEmpty()) {
+                var show = queue.poll();
+                player.sendBlockChange(show.location, show.showMaterial.createBlockData());
+                placedQueue.add(show.location);
+
             }
             running = false;
         }

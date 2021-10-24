@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class GeoLocatorService {
@@ -17,16 +18,16 @@ public final class GeoLocatorService {
 
     }
 
-    private final Map<Player, GPS> locatorCache = new ConcurrentHashMap<>();
+    private final Map<UUID, GPS> locatorCache = new ConcurrentHashMap<>();
 
     public void setStart(Player player, Location location) {
-        locatorCache.putIfAbsent(player, new GPS());
-        locatorCache.get(player).start = location;
+        locatorCache.putIfAbsent(player.getUniqueId(), new GPS());
+        locatorCache.get(player.getUniqueId()).start = location;
     }
 
     public void setDestination(Player player, Location location) {
-        locatorCache.putIfAbsent(player, new GPS());
-        locatorCache.get(player).destination = location;
+        locatorCache.putIfAbsent(player.getUniqueId(), new GPS());
+        locatorCache.get(player.getUniqueId()).destination = location;
     }
 
     public boolean hasStart(Player player){
@@ -42,10 +43,10 @@ public final class GeoLocatorService {
     }
 
     public GPS getLocator(Player player){
-        return locatorCache.get(player);
+        return locatorCache.get(player.getUniqueId());
     }
 
     public void clearLocator(Player player) {
-        locatorCache.remove(player);
+        locatorCache.remove(player.getUniqueId());
     }
 }

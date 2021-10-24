@@ -4,6 +4,7 @@ import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.util.Vector;
 
 import javax.inject.Inject;
@@ -24,6 +25,18 @@ public final class MCMechanism {
         var block = vector.toLocation(world).getBlock();
         if (BLOCKS_CAN_CLIMB.contains(block.getType())) { // 可以爬行的方塊，則視為可以通過
             return true;
+        }
+        // 水是可爬行方塊，但需要做一些過濾
+        if (block.getType() == Material.WATER){
+            // 檢查水是否流動
+            var leveled = (Levelled)block.getState().getBlockData();
+            // level > 0 為水流動方塊
+            if (leveled.getLevel() > 0) {
+                return true;
+            }else{ // 若果為固定水，則確保上方再無任何液體方塊
+                var topBlock = vector.clone().add(new Vector(0, 1, 0)).toLocation(world).getBlock();
+                return !topBlock.isLiquid();
+            }
         }
         if (isWoodDoor(block.getType())){ // 木門可以通過
             return true;

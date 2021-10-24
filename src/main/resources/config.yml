@@ -1,9 +1,13 @@
 debug: false
 
+default_settings:
+  distance_calculator: manhattan
+  weight: 15
+  algorithm: astar
+
 can_climb:
   - LADDER
   - VINE
-  - WATER
 
 damageable:
   - LAVA

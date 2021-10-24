@@ -1,5 +1,6 @@
 package com.ericlam.mc.visiblepathfinder.searcher;
 
+import com.ericlam.mc.visiblepathfinder.api.DistanceScorer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -12,11 +13,11 @@ import java.util.*;
 public final class JumpPointSearcher extends AStarSearcher {
 
     @Override
-    public List<Vector> search(Vector from, Vector to, World world, @Nullable Player player) {
+    public List<Vector> search(Vector from, Vector to, World world, @Nullable Player player, DistanceScorer scorer, int weight) {
         return List.of();
     }
 
-    public Queue<Vector> findPathSync(Vector start, Vector goal, World world, @Nullable Player player) {
+    public Queue<Vector> findPathSync(Vector start, Vector goal, World world, @Nullable Player player, DistanceScorer scorer) {
 
         Map<Vector, Double> fMap = new HashMap<>(); // distance to start + estimate to end
         Map<Vector, Double> gMap = new HashMap<>(); // distance to start (parent's g + distance from parent)
@@ -52,7 +53,7 @@ public final class JumpPointSearcher extends AStarSearcher {
                 return backtrace(node, parentMap);
             }
             // add all possible next steps from the current node
-            identifySuccessors(node, goal, goals, open, closed, parentMap, fMap, gMap, hMap, world, player);
+            identifySuccessors(node, goal, goals, open, closed, parentMap, fMap, gMap, hMap, world, player, scorer);
         }
 
         // failed to find a path
@@ -193,7 +194,8 @@ public final class JumpPointSearcher extends AStarSearcher {
                                     Map<Vector, Double> gMap,
                                     Map<Vector, Double> hMap,
                                     World world,
-                                    @Nullable Player player
+                                    @Nullable Player player,
+                                    DistanceScorer scorer
     ) {
         // get all neighbors to the current node
         Collection<Vector> neighbors = findNeighbors(node, parentMap, world, player);
