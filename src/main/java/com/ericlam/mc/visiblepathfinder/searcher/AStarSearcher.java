@@ -28,15 +28,16 @@ public class AStarSearcher implements GraphSearchAlgorithm {
     public List<Vector> search(Vector from, Vector to, World world, @Nullable Player player, DistanceScorer scorer, int weight) {
         Queue<RouteNode> openSet = new PriorityQueue<>();
         Map<Vector, RouteNode> allNodes = new HashMap<>();
-        var cost = scorer.computeCost(from, to);
+        var cost = weight * scorer.computeCost(from, to);
         RouteNode start = new RouteNode(from, null, 0d, cost);
         debugger.log("開始節點 {} 與 目標 {} 的距離為 {}", from, to, cost);
         openSet.add(start);
         allNodes.put(from, start);
         while (!openSet.isEmpty()) {
-
             RouteNode next = openSet.poll();
+
             if (next.current.equals(to)) {
+                mcMechanism.sendProgress(player, 100, 0);
                 debugger.log("節點 {} 已是目的地", next.current);
                 List<Vector> route = new ArrayList<>();
                 RouteNode current = next;
@@ -47,6 +48,9 @@ public class AStarSearcher implements GraphSearchAlgorithm {
                 } while (current != null);
                 return route;
             }
+
+            // 發送進度 (允許異步)
+            mcMechanism.sendProgress(player, cost, next.estimatedScore);
 
             debugger.log("正在尋找節點 {} 的鄰近節點..", next.current);
             var neighbours = this.findNeighbours(next.current, world, player);
@@ -116,10 +120,11 @@ public class AStarSearcher implements GraphSearchAlgorithm {
             for (int y = 0; y <= dy; y++) {
                 for (int z = 0; z <= dz; z++) {
                     Vector vector = rightTopBottom.clone().add(new Vector(x, y, z));
-                    var passable = mcMechanism.isPassable(vector, world);
+                    if (vector.equals(current)) continue; // 不添加自身
+                    var walkable = mcMechanism.isWalkable(vector, world);
                     var onGround = mcMechanism.isOnGround(vector, world);
-                    debugger.log("節點 {} 的鄰近節點 {}, 方塊是否可通過: {}, 方塊是否在地: {}", current, vector, passable, onGround);
-                    if (passable && onGround) { // 如果方塊無法通過或在地，則不添加到鄰近節點
+                    debugger.log("節點 {} 的鄰近節點 {}, 方塊是否可行走: {}, 方塊是否在地: {}", current, vector, walkable, onGround);
+                    if (walkable && onGround) { // 如果方塊無法通過或在地，則不添加到鄰近節點
                         if (player != null) {
                             debugger.debugBlock(vector.toLocation(world), player);
                             //debugger.debugParticle(vector.toLocation(world), player);

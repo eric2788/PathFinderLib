@@ -6,7 +6,7 @@
 
     <groupId>com.ericlam.mc</groupId>
     <artifactId>VisiblePathFinder</artifactId>
-    <version>0.1</version>
+    <version>0.1.alpha-5</version>
     <packaging>jar</packaging>
 
     <name>VisiblePathFinder</name>

@@ -13,6 +13,7 @@ public final class VisiblePathFinderRegistry implements ComponentsRegistry {
             gps.command(GPSLocateCommand.class);
             gps.command(GPSDebugCommand.class);
             gps.command(GPSTerminateCommand.class);
+            //gps.command(GPSTestCommand.class);
         });
     }
 

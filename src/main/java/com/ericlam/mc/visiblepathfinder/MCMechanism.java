@@ -1,13 +1,16 @@
 package com.ericlam.mc.visiblepathfinder;
 
+import com.ericlam.mc.visiblepathfinder.api.DistanceScorer;
 import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.inject.Inject;
+import java.text.MessageFormat;
 import java.util.List;
 
 public final class MCMechanism {
@@ -16,9 +19,18 @@ public final class MCMechanism {
     private final List<Material> DAMAGEABLE;
 
     @Inject
+    private Debugger debugger;
+
+    @Inject
     public MCMechanism(VPFConfig config) {
         BLOCKS_CAN_CLIMB = config.can_climb;
         DAMAGEABLE = config.damageable;
+    }
+
+    public boolean isWalkable(Vector vector, World world){
+        var topV = vector.clone().add(new Vector(0, 1, 0));
+        // 確保有兩格空間能通過
+        return isPassable(topV, world) && isPassable(vector, world);
     }
 
     public boolean isPassable(Vector vector, World world) {
@@ -27,21 +39,21 @@ public final class MCMechanism {
             return true;
         }
         // 水是可爬行方塊，但需要做一些過濾
-        if (block.getType() == Material.WATER){
+        if (block.getType() == Material.WATER) {
             // 檢查水是否流動
-            var leveled = (Levelled)block.getState().getBlockData();
+            var leveled = (Levelled) block.getState().getBlockData();
             // level > 0 為水流動方塊
             if (leveled.getLevel() > 0) {
                 return true;
-            }else{ // 若果為固定水，則確保上方再無任何液體方塊
+            } else { // 若果為固定水，則確保上方再無任何液體方塊
                 var topBlock = vector.clone().add(new Vector(0, 1, 0)).toLocation(world).getBlock();
                 return !topBlock.isLiquid();
             }
         }
-        if (isWoodDoor(block.getType())){ // 木門可以通過
+        if (isWoodDoor(block.getType())) { // 木門可以通過
             return true;
         }
-        if (DAMAGEABLE.contains(block.getType())){ // 有傷害，不能通過
+        if (DAMAGEABLE.contains(block.getType())) { // 有傷害，不能通過
             return false;
         }
         return block.isPassable();
@@ -55,7 +67,7 @@ public final class MCMechanism {
             return false;
         }
         // 水面上可以
-        if (block.getType() == Material.WATER){
+        if (block.getType() == Material.WATER) {
             return true;
         }
         // 底部方塊為固定 或 底部方塊為可爬行
@@ -63,11 +75,17 @@ public final class MCMechanism {
     }
 
 
-    private boolean isWoodDoor(Material type){
+    private boolean isWoodDoor(Material type) {
         return type != Material.IRON_DOOR && type != Material.IRON_TRAPDOOR && type.toString().endsWith("DOOR");
     }
 
-    private boolean isStair(Material type){
+    public void sendProgress(Player player, double totalCost, double currentCost) {
+        if (player == null) return;
+        var h = Math.max(0, (totalCost - currentCost) / totalCost) * 100;
+        player.sendActionBar(Component.text(MessageFormat.format("§e進度: {0}%", Math.round(h))));
+    }
+
+    private boolean isStair(Material type) {
         return type.toString().endsWith("STAIRS");
     }
 }

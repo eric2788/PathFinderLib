@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public final class FakeBlockManager {
 
+    /* no need queue
     private static class ShowBlock {
 
         final Location location;
@@ -25,15 +26,24 @@ public final class FakeBlockManager {
         }
     }
 
+     */
+
     private final Map<Player, Queue<Location>> fakePlacedQueue = new ConcurrentHashMap<>();
-    private final Map<Player, Queue<ShowBlock>> playerQueueMap = new ConcurrentHashMap<>();
-    private final Map<Player, FakeBlockRunnable> runnableMap = new HashMap<>();
+
+    /* no need runnable and queue map due to can send async
+     private final Map<Player, Queue<ShowBlock>> playerQueueMap = new ConcurrentHashMap<>();
+     private final Map<Player, FakeBlockRunnable> runnableMap = new HashMap<>();
+     */
 
     @Inject
     private VisiblePathFinder plugin;
 
 
     public void showFakeBlock(Location location, Player player, Material material) {
+        fakePlacedQueue.putIfAbsent(player, new ConcurrentLinkedDeque<>());
+        player.sendBlockChange(location, material.createBlockData());
+        fakePlacedQueue.get(player).add(location);
+        /* no need runnable due to fake block can send async
         if (!runnableMap.containsKey(player)) {
             playerQueueMap.putIfAbsent(player, new ConcurrentLinkedDeque<>());
             fakePlacedQueue.putIfAbsent(player, new ConcurrentLinkedDeque<>());
@@ -42,6 +52,8 @@ public final class FakeBlockManager {
             runnableMap.put(player, runnable);
         }
         playerQueueMap.get(player).add(new ShowBlock(location, material));
+
+         */
     }
 
     public void clearAllFakeBlock(Player player) {
@@ -55,6 +67,7 @@ public final class FakeBlockManager {
     }
 
 
+    /* fake block can send async, no need runnable
     private class FakeBlockRunnable extends BukkitRunnable {
 
         private final Player player;
@@ -79,5 +92,7 @@ public final class FakeBlockManager {
             running = false;
         }
     }
+
+     */
 
 }

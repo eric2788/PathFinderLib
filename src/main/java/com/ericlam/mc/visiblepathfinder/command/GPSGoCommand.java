@@ -8,6 +8,7 @@ import com.ericlam.mc.visiblepathfinder.FakeBlockManager;
 import com.ericlam.mc.visiblepathfinder.GeoLocatorService;
 import com.ericlam.mc.visiblepathfinder.FakeParticleManager;
 import com.ericlam.mc.visiblepathfinder.api.PathSearcherService;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -96,7 +97,7 @@ public class GPSGoCommand implements CommandNode {
                     particleManager.clearParticle(player);
                     for (var v : paths) {
                         var loc = v.toLocation(world);
-                        //debugger.showFakeBlock(loc, player, Material.TORCH);
+                        //blockManager.showFakeBlock(loc, player, Material.TORCH);
                         particleManager.spawnFixedParticles(player, loc, WrappedParticle.create(Particle.CLOUD, null), 8);
                     }
                     player.sendMessage("§a導航完成。");

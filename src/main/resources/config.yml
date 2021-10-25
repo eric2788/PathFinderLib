@@ -5,6 +5,11 @@ default_settings:
   weight: 15
   algorithm: astar
 
+particle_settings:
+  loop_per_tick: 5
+  interval_per_loop: 2
+  interval_per_trace: 20
+
 can_climb:
   - LADDER
   - VINE
