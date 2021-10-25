@@ -5,11 +5,11 @@
 
 ## 展示
 
-![0](https://i.gyazo.com/1a5e6d5bee10e3fc4761bfcb32bbcaa3.gif)
+![0](gif/0.gif)
 
-![1](https://i.gyazo.com/4126a92520de9c6f757b2c816f599f51.gif)
+![1](gif/1.gif)
 
-![2](https://i.gyazo.com/6770b349a6c0cf8999541627db2ac8b8.gif)
+![2](gif/2.gif)
 
 ![3](https://cdn.discordapp.com/attachments/864121164242747422/901846808936972428/unknown.png)
 
