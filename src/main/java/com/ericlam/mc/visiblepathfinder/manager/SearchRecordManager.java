@@ -1,6 +1,7 @@
-package com.ericlam.mc.visiblepathfinder;
+package com.ericlam.mc.visiblepathfinder.manager;
 
-import com.ericlam.mc.visiblepathfinder.api.GraphSearchAlgorithm;
+import com.ericlam.mc.visiblepathfinder.VisiblePathFinder;
+import com.ericlam.mc.visiblepathfinder.api.SearchAlgorithm;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,7 +18,7 @@ public class SearchRecordManager {
     private VisiblePathFinder plugin;
 
     private final Map<Player, RoutingRunnable> runnableMap = new ConcurrentHashMap<>();
-    private final Map<Player, GraphSearchAlgorithm> lastSearch = new ConcurrentHashMap<>();
+    private final Map<Player, SearchAlgorithm> lastSearch = new ConcurrentHashMap<>();
 
     public boolean removeLastSearch(Player player) {
         var last = lastSearch.remove(player);
@@ -25,7 +26,7 @@ public class SearchRecordManager {
         return last != null;
     }
 
-    public void setLastSearch(Player player, GraphSearchAlgorithm algorithm) {
+    public void setLastSearch(Player player, SearchAlgorithm algorithm) {
         lastSearch.put(player, algorithm);
     }
 

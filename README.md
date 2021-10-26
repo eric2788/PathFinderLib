@@ -11,6 +11,12 @@
 
 ![2](gif/2.gif)
 
+BiDirectional
+![3](gif/3.gif)
+
+Dynamic Path Finding
+![4](gif/4.gif)
+
 ![3](https://cdn.discordapp.com/attachments/864121164242747422/901846808936972428/unknown.png)
 
 ![4](https://cdn.discordapp.com/attachments/864121164242747422/901847031482564638/unknown.png)

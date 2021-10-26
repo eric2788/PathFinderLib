@@ -12,6 +12,8 @@ public class VPFConfig extends Configuration {
     public boolean debug = false;
 
     public DefaultSettings default_settings;
+    public DynamicSettings dynamic_settings;
+
     public ParticleSettings particle_settings;
 
     public List<Material> can_climb;
@@ -31,6 +33,12 @@ public class VPFConfig extends Configuration {
         public long interval_per_loop = 2L;
         public long interval_per_trace = 20L;
 
+    }
+
+    public static class DynamicSettings {
+        public String algorithm = "dstar";
+        public long ticks_per_check = 20L;
+        public int max_accepted_radius = 2;
     }
 
 }

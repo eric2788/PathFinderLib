@@ -27,8 +27,6 @@ public final class TraceSearcher extends AStarSearcher {
     protected void findSuccessors(Set<Vector> neighbours,
                                   RouteNode next,
                                   Vector to,
-                                  Map<Vector, RouteNode> allNodes,
-                                  Queue<RouteNode> openSet,
                                   DistanceScorer scorer,
                                   int weight
     ) {

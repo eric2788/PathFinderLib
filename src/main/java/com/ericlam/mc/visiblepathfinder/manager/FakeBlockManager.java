@@ -1,5 +1,6 @@
-package com.ericlam.mc.visiblepathfinder;
+package com.ericlam.mc.visiblepathfinder.manager;
 
+import com.ericlam.mc.visiblepathfinder.VisiblePathFinder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

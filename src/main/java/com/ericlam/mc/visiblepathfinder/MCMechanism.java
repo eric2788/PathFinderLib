@@ -3,6 +3,7 @@ package com.ericlam.mc.visiblepathfinder;
 import com.ericlam.mc.visiblepathfinder.api.DistanceScorer;
 import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.Levelled;
@@ -71,7 +72,7 @@ public final class MCMechanism {
             return true;
         }
         // 底部方塊為固定 或 底部方塊為可爬行
-        return block.isSolid() || BLOCKS_CAN_CLIMB.contains(block.getType());
+        return (block.isSolid() && !block.isPassable()) || BLOCKS_CAN_CLIMB.contains(block.getType());
     }
 
 

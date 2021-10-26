@@ -5,17 +5,16 @@ import com.ericlam.mc.eld.ELDBukkitAddon;
 import com.ericlam.mc.eld.ManagerProvider;
 import com.ericlam.mc.eld.ServiceCollection;
 import com.ericlam.mc.eld.annotations.ELDPlugin;
-import com.ericlam.mc.visiblepathfinder.api.DistanceScorer;
-import com.ericlam.mc.visiblepathfinder.api.GraphSearchAlgorithm;
-import com.ericlam.mc.visiblepathfinder.api.PathSearcherService;
-import com.ericlam.mc.visiblepathfinder.api.SearchWayInstallation;
+import com.ericlam.mc.visiblepathfinder.api.*;
 import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
 import com.ericlam.mc.visiblepathfinder.distances.BukkitVectorDistance;
 import com.ericlam.mc.visiblepathfinder.distances.ChebyshevDistance;
 import com.ericlam.mc.visiblepathfinder.distances.EuclideanDistance;
 import com.ericlam.mc.visiblepathfinder.distances.ManhattanDistance;
-import com.ericlam.mc.visiblepathfinder.searcher.AStarSearcher;
-import com.ericlam.mc.visiblepathfinder.searcher.TraceSearcher;
+import com.ericlam.mc.visiblepathfinder.manager.DynamicPathSearcherManager;
+import com.ericlam.mc.visiblepathfinder.manager.FakeParticleManager;
+import com.ericlam.mc.visiblepathfinder.manager.PathSearcherManager;
+import com.ericlam.mc.visiblepathfinder.searcher.*;
 import com.google.inject.AbstractModule;
 
 import java.util.Map;
@@ -40,6 +39,7 @@ public final class VisiblePathFinder extends ELDBukkitAddon {
         collection.addConfiguration(VPFConfig.class);
 
         collection.bindService(PathSearcherService.class, PathSearcherManager.class);
+        collection.bindService(DynamicPathSearcherService.class, DynamicPathSearcherManager.class);
         collection.addSingleton(GeoLocatorService.class);
         collection.addSingleton(MCMechanism.class);
         collection.addSingleton(Debugger.class);
@@ -53,6 +53,10 @@ public final class VisiblePathFinder extends ELDBukkitAddon {
 
         install.installSearch("astar", AStarSearcher.class);
         install.installSearch("trace", TraceSearcher.class);
+        install.installSearch("biastar", BiAStarSearcher.class);
+
+        install.installDynamicSearch("dstar", DStarSearcher.class);
+        install.installDynamicSearch("bidstar", BiDStarSearcher.class);
 
         installer.installModule(new SearchModule(install));
     }
@@ -60,14 +64,24 @@ public final class VisiblePathFinder extends ELDBukkitAddon {
     public static final class SearchWayInstallationImpl implements SearchWayInstallation {
 
         private final Map<String, Class<? extends GraphSearchAlgorithm>> algorithmMap = new ConcurrentHashMap<>();
+        private final Map<String, Class<? extends DynamicGraphSearchAlgorithm>> dynamicAlgorithmMap = new ConcurrentHashMap<>();
 
         @Override
-        public void installSearch(String searcher, Class<? extends GraphSearchAlgorithm> algorithmCls) {
-            this.algorithmMap.put(searcher, algorithmCls);
+        public void installSearch(String searcher, Class<? extends GraphSearchAlgorithm> algorithm) {
+            this.algorithmMap.put(searcher, algorithm);
+        }
+
+        @Override
+        public void installDynamicSearch(String searcher, Class<? extends DynamicGraphSearchAlgorithm> algorithm) {
+            this.dynamicAlgorithmMap.put(searcher, algorithm);
         }
 
         public Map<String, Class<? extends GraphSearchAlgorithm>> getAlgorithmMap() {
             return algorithmMap;
+        }
+
+        public Map<String, Class<? extends DynamicGraphSearchAlgorithm>> getDynamicAlgorithmMap() {
+            return dynamicAlgorithmMap;
         }
     }
 

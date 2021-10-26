@@ -1,11 +1,11 @@
-package com.ericlam.mc.visiblepathfinder;
+package com.ericlam.mc.visiblepathfinder.manager;
 
 import com.comphenix.packetwrapper.WrapperPlayServerWorldParticles;
 import com.comphenix.protocol.wrappers.WrappedParticle;
+import com.ericlam.mc.visiblepathfinder.VisiblePathFinder;
 import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +75,7 @@ public final class FakeParticleManager {
             for (int i = 0; i < config.particle_settings.loop_per_tick; i++) {
                 if (iterator.hasNext()) {
                     var packet = iterator.next();
+                    if (packet == null) continue;
                     packet.sendPacket(player);
                 } else {
                     cancel();

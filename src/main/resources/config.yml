@@ -5,6 +5,11 @@ default_settings:
   weight: 15
   algorithm: astar
 
+dynamic_settings:
+  algorithm: "dstar"
+  ticks_per_check: 20
+  max_accepted_radius: 2
+
 particle_settings:
   loop_per_tick: 5
   interval_per_loop: 2

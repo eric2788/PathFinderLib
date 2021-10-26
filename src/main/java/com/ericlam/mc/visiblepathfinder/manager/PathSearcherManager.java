@@ -1,66 +1,32 @@
-package com.ericlam.mc.visiblepathfinder;
+package com.ericlam.mc.visiblepathfinder.manager;
 
-import com.ericlam.mc.eld.services.ScheduleService;
+import com.ericlam.mc.visiblepathfinder.pathfinder.PathFinder;
+import com.ericlam.mc.visiblepathfinder.VisiblePathFinder;
 import com.ericlam.mc.visiblepathfinder.api.DistanceScorer;
 import com.ericlam.mc.visiblepathfinder.api.GraphSearchAlgorithm;
 import com.ericlam.mc.visiblepathfinder.api.PathSearcher;
 import com.ericlam.mc.visiblepathfinder.api.PathSearcherService;
 import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
-import com.google.common.graph.Graph;
-import com.google.inject.Injector;
-import org.bukkit.entity.Player;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Map;
 
-public class PathSearcherManager implements PathSearcherService {
+public final class PathSearcherManager extends PathSearcherBase<PathSearcher, PathSearcherService.PathSearcherBuilder> implements PathSearcherService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PathSearcherService.class);
-    ;
-
-    @Inject
-    private ScheduleService scheduleService;
-    @Inject
-    private VisiblePathFinder plugin;
-    @Inject
-    private SearchRecordManager searchRecordManager;
-    @Inject
-    private FakeParticleManager particleManager;
-    @Inject
-    private FakeBlockManager blockManager;
-    @Inject
-    private Injector injector;
-
-    private final String defaultSearcher;
-    private final int defaultRange;
-    private final DistanceScorer defaultScorer;
-    private final Map<String, DistanceScorer> distanceScorerMap;
     private final Map<String, Class<? extends GraphSearchAlgorithm>> algorithmMap;
 
     @Inject
-    public PathSearcherManager(VPFConfig config, Map<String, DistanceScorer> distanceScorerMap, VisiblePathFinder.SearchWayInstallationImpl searchWays) {
+    public PathSearcherManager(VPFConfig config,
+                               Map<String, DistanceScorer> distanceScorerMap,
+                               VisiblePathFinder.SearchWayInstallationImpl searchWays
+    ) {
+        super(config, distanceScorerMap, searchWays);
         this.algorithmMap = searchWays.getAlgorithmMap();
-        this.distanceScorerMap = distanceScorerMap;
-        this.defaultSearcher = config.default_settings.algorithm;
-        this.defaultScorer = distanceScorerMap.get(config.default_settings.distance_calculator);
-        this.defaultRange = config.default_settings.weight;
-        if (this.defaultScorer == null) {
-            throw new IllegalArgumentException("Unknown distance calculator: " + config.default_settings.distance_calculator);
-        }
     }
-
 
     @Override
     public boolean hasPathSearcher(String searcher) {
         return algorithmMap.containsKey(searcher);
-    }
-
-    @Override
-    public boolean hasDistanceAlgorithm(String distance) {
-        return distanceScorerMap.containsKey(distance);
     }
 
     @Override
@@ -75,7 +41,7 @@ public class PathSearcherManager implements PathSearcherService {
                 scheduleService,
                 plugin,
                 () -> injector.getInstance(searcherCls),
-                defaultRange,
+                defaultWeight,
                 defaultScorer
         );
     }
@@ -85,22 +51,12 @@ public class PathSearcherManager implements PathSearcherService {
         return new PathFinderBuilder(searcher);
     }
 
-    @Override
-    public boolean terminateSearch(Player player) {
-        var re = searchRecordManager.removeLastSearch(player) || searchRecordManager.removeLastRoute(player);
-        if (re){
-            particleManager.clearParticle(player);
-            blockManager.clearAllFakeBlock(player);
-        }
-        return re;
-    }
-
 
     public class PathFinderBuilder implements PathSearcherBuilder {
 
         private String searcher;
         private String distance = "";
-        private int weight = defaultRange;
+        private int weight = defaultWeight;
 
         public PathFinderBuilder(String searcher) {
             this.searcher = searcher;

@@ -4,11 +4,10 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.ericlam.mc.eld.annotations.CommandArg;
 import com.ericlam.mc.eld.annotations.Commander;
 import com.ericlam.mc.eld.components.CommandNode;
-import com.ericlam.mc.visiblepathfinder.FakeBlockManager;
+import com.ericlam.mc.visiblepathfinder.manager.FakeBlockManager;
 import com.ericlam.mc.visiblepathfinder.GeoLocatorService;
-import com.ericlam.mc.visiblepathfinder.FakeParticleManager;
+import com.ericlam.mc.visiblepathfinder.manager.FakeParticleManager;
 import com.ericlam.mc.visiblepathfinder.api.PathSearcherService;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -38,7 +37,7 @@ public class GPSGoCommand implements CommandNode {
     private String searchAlgorithm = "astar";
     @CommandArg(order = 2, labels = "距離演算法", optional = true)
     private String distanceAlgorithm = "chebyshev";
-    @CommandArg(order = 3, labels = "範圍", optional = true)
+    @CommandArg(order = 3, labels = "權重", optional = true)
     private int weight = 15;
 
     @Override

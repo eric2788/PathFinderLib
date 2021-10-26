@@ -3,6 +3,8 @@ package com.ericlam.mc.visiblepathfinder;
 import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.ericlam.mc.visiblepathfinder.api.GraphSearchAlgorithm;
 import com.ericlam.mc.visiblepathfinder.config.VPFConfig;
+import com.ericlam.mc.visiblepathfinder.manager.FakeBlockManager;
+import com.ericlam.mc.visiblepathfinder.manager.FakeParticleManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
