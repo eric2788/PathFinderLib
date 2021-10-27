@@ -48,6 +48,11 @@ public class BiAStarSearcher extends AStarSearcher {
 
             }
 
+            if (terminate){
+                debugger.log("搜索已被強制終止");
+                return List.of();
+            }
+
         }
 
         debugger.log("找不到路徑。");

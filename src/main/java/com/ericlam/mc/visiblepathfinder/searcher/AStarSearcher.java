@@ -34,6 +34,7 @@ public class AStarSearcher implements GraphSearchAlgorithm {
         this.terminate = false;
         allNodes.clear();
         openSet.clear();
+        closedSet.clear();
 
         var maxCost = weight * scorer.computeCost(from, to);
         RouteNode start = new RouteNode(from, null, 0d, maxCost);

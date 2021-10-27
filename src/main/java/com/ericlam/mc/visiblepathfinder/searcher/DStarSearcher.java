@@ -75,6 +75,12 @@ public class DStarSearcher implements DynamicGraphSearchAlgorithm {
 
 
     private void recalculation(World world, @Nullable Player player, DistanceScorer scorer, int weight, int maxRange, long tickCheck) {
+
+        if (aStarSearcher.terminate){
+            debugger.log("搜索已被強制終止");
+            return;
+        }
+
         // reuse A* searching
         var result = aStarSearcher.search(moverVector.get(), targetVector.get(), world, player, scorer, weight);
         Bukkit.getScheduler().runTask(plugin, () -> this.onUpdated.accept(result)); // first routed path, run in sync
@@ -130,6 +136,12 @@ public class DStarSearcher implements DynamicGraphSearchAlgorithm {
 
         @Override
         public void run() {
+
+            if (aStarSearcher.terminate){
+                debugger.log("搜索已被強制終止");
+                cancel();
+                return;
+            }
 
             if (targetEntity.isDead() || movingEntity.isDead()) {
                 debugger.log("搜索者或目標已死亡，中止搜索。");
