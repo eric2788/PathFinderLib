@@ -1,4 +1,4 @@
-## VisiblePathFinder
+## PathFinderLib
 
 本插件是把尋路演算帶進MC的實現，採用 A*演算法 + 權重 的計算方式
 

@@ -1,0 +1,6 @@
+name: PathFinderLib
+version: '${project.version}'
+main: com.ericlam.mc.pathfinderlib.PathFinderLib
+api-version: 1.16
+depend: [ ELDependenci, ProtocolLib ]
+authors: [ EricLam ]

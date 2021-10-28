@@ -1,6 +1,0 @@
-name: VisiblePathFinder
-version: '${project.version}'
-main: com.ericlam.mc.visiblepathfinder.VisiblePathFinder
-api-version: 1.16
-depend: [ ELDependenci, ProtocolLib ]
-authors: [ EricLam ]
